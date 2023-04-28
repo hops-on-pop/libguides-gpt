@@ -353,7 +353,7 @@ export default function Home() {
 
                   {guides.map((guide, index) => (
                     <div key={index}>
-                      <div className="mt-4 border border-[#ffcc00] rounded-lg p-4">
+                      <div className="mt-4 border-[#ffcc00] border-2 rounded-lg p-4 bg-gray-50">
                         <div className="flex justify-between">
                           <div>
                             <div className="font-bold text-xl text-[#990000]">{guide.guide_title}</div>
@@ -376,14 +376,14 @@ export default function Home() {
               </div>
             ) : guides.length > 0 ? (
               <div className="mt-6 pb-16">
-                <div className="font-bold text-2xl">Matching Guides</div>
+                <div className="font-bold text-2xl text-[#990000]">Matching Guides</div>
                 {guides.map((guide, index) => (
                   <div key={index}>
-                    <div className="mt-4 border border-zinc-600 rounded-lg p-4">
+                    <div className="mt-4 border-[#ffcc00] border-2 rounded-lg p-4 bg-gray-50">
                       <div className="flex justify-between">
                         <div>
-                          <div className="font-bold text-xl">{guide.guide_title}</div>
-                          <div className="mt-1 font-bold text-sm">{guide.page_title}</div>
+                          <div className="font-bold text-xl text-[#990000]">{guide.guide_title}</div>
+                          <div className="mt-1 font-bold text-sm">{guide.page_title}: {guide.box_title}</div>
                         </div>
                         <a
                           className="hover:opacity-50 ml-2"
