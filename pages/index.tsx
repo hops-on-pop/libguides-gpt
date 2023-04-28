@@ -1,7 +1,6 @@
 import { Answer } from "@/components/Answer/Answer";
-import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
-import { PGChunk } from "@/types";
+import { LGBox } from "@/types";
 import { IconArrowRight, IconExternalLink, IconSearch } from "@tabler/icons-react";
 import endent from "endent";
 import Head from "next/head";
@@ -11,7 +10,7 @@ export default function Home() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [query, setQuery] = useState<string>("");
-  const [chunks, setChunks] = useState<PGChunk[]>([]);
+  const [guides, setGuides] = useState<LGBox[]>([]);
   const [answer, setAnswer] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -32,7 +31,7 @@ export default function Home() {
     }
 
     setAnswer("");
-    setChunks([]);
+    setGuides([]);
 
     setLoading(true);
 
@@ -49,9 +48,9 @@ export default function Home() {
       throw new Error(searchResponse.statusText);
     }
 
-    const results: PGChunk[] = await searchResponse.json();
+    const results: LGBox[] = await searchResponse.json();
 
-    setChunks(results);
+    setGuides(results);
 
     setLoading(false);
 
@@ -72,7 +71,7 @@ export default function Home() {
     }
 
     setAnswer("");
-    setChunks([]);
+    setGuides([]);
 
     setLoading(true);
 
@@ -89,12 +88,12 @@ export default function Home() {
       throw new Error(searchResponse.statusText);
     }
 
-    const results: PGChunk[] = await searchResponse.json();
+    const results: LGBox[] = await searchResponse.json();
 
-    setChunks(results);
+    setGuides(results);
 
     const prompt = endent`
-    Use the following passages to provide an answer to the query: "${query}"
+    Use the following content from research guides to provide an answer to the query: "${query}"
 
     ${results?.map((d: any) => d.content).join("\n\n")}
     `;
@@ -150,18 +149,18 @@ export default function Home() {
       return;
     }
 
-    localStorage.setItem("PG_KEY", apiKey);
-    localStorage.setItem("PG_MATCH_COUNT", matchCount.toString());
-    localStorage.setItem("PG_MODE", mode);
+    localStorage.setItem("LG_KEY", apiKey);
+    localStorage.setItem("LG_MATCH_COUNT", matchCount.toString());
+    localStorage.setItem("LG_MODE", mode);
 
     setShowSettings(false);
     inputRef.current?.focus();
   };
 
   const handleClear = () => {
-    localStorage.removeItem("PG_KEY");
-    localStorage.removeItem("PG_MATCH_COUNT");
-    localStorage.removeItem("PG_MODE");
+    localStorage.removeItem("LG_KEY");
+    localStorage.removeItem("LG_MATCH_COUNT");
+    localStorage.removeItem("LG_MODE");
 
     setApiKey("");
     setMatchCount(5);
@@ -177,20 +176,20 @@ export default function Home() {
   }, [matchCount]);
 
   useEffect(() => {
-    const PG_KEY = localStorage.getItem("PG_KEY");
-    const PG_MATCH_COUNT = localStorage.getItem("PG_MATCH_COUNT");
-    const PG_MODE = localStorage.getItem("PG_MODE");
+    const LG_KEY = localStorage.getItem("LG_KEY");
+    const LG_MATCH_COUNT = localStorage.getItem("LG_MATCH_COUNT");
+    const LG_MODE = localStorage.getItem("LG_MODE");
 
-    if (PG_KEY) {
-      setApiKey(PG_KEY);
+    if (LG_KEY) {
+      setApiKey(LG_KEY);
     }
 
-    if (PG_MATCH_COUNT) {
-      setMatchCount(parseInt(PG_MATCH_COUNT));
+    if (LG_MATCH_COUNT) {
+      setMatchCount(parseInt(LG_MATCH_COUNT));
     }
 
-    if (PG_MODE) {
-      setMode(PG_MODE as "search" | "chat");
+    if (LG_MODE) {
+      setMode(LG_MODE as "search" | "chat");
     }
 
     inputRef.current?.focus();
@@ -199,10 +198,10 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Paul Graham GPT</title>
+        <title>USC Libraries LibGuides GPT</title>
         <meta
           name="description"
-          content={`AI-powered search and chat for Paul Graham's essays.`}
+          content={`AI-powered search and chat for select USC Libraries Research Guides.`}
         />
         <meta
           name="viewport"
@@ -240,7 +239,7 @@ export default function Home() {
                 </div>
 
                 <div className="mt-2">
-                  <div>Passage Count</div>
+                  <div>Guide Count</div>
                   <input
                     type="number"
                     min={1}
@@ -294,7 +293,7 @@ export default function Home() {
                   ref={inputRef}
                   className="h-12 w-full rounded-full border border-zinc-600 pr-12 pl-11 focus:border-zinc-800 focus:outline-none focus:ring-1 focus:ring-zinc-800 sm:h-16 sm:py-2 sm:pr-16 sm:pl-16 sm:text-lg"
                   type="text"
-                  placeholder="How do I start a startup?"
+                  placeholder="How do I cite using APA?"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   onKeyDown={handleKeyDown}
@@ -303,7 +302,7 @@ export default function Home() {
                 <button>
                   <IconArrowRight
                     onClick={mode === "search" ? handleSearch : handleAnswer}
-                    className="absolute right-2 top-2.5 h-7 w-7 rounded-full bg-blue-500 p-1 hover:cursor-pointer hover:bg-blue-600 sm:right-3 sm:top-3 sm:h-10 sm:w-10 text-white"
+                    className="absolute right-2 top-2.5 h-7 w-7 rounded-full bg-red-800 p-1 hover:cursor-pointer hover:bg-yellow-600 sm:right-3 sm:top-3 sm:h-10 sm:w-10 text-white"
                   />
                 </button>
               </div>
@@ -335,7 +334,7 @@ export default function Home() {
                   </>
                 )}
 
-                <div className="font-bold text-2xl mt-6">Passages</div>
+                <div className="font-bold text-2xl mt-6">Matching Guides</div>
                 <div className="animate-pulse mt-2">
                   <div className="h-4 bg-gray-300 rounded"></div>
                   <div className="h-4 bg-gray-300 rounded mt-2"></div>
@@ -346,66 +345,65 @@ export default function Home() {
               </div>
             ) : answer ? (
               <div className="mt-6">
-                <div className="font-bold text-2xl mb-2">Answer</div>
+                <div className="font-bold text-2xl mb-2 text-[#990000]">Answer</div>
                 <Answer text={answer} />
 
                 <div className="mt-6 mb-16">
-                  <div className="font-bold text-2xl">Passages</div>
+                  <div className="font-bold text-2xl text-[#990000]">Matching Guides</div>
 
-                  {chunks.map((chunk, index) => (
+                  {guides.map((guide, index) => (
                     <div key={index}>
-                      <div className="mt-4 border border-zinc-600 rounded-lg p-4">
+                      <div className="mt-4 border border-[#ffcc00] rounded-lg p-4">
                         <div className="flex justify-between">
                           <div>
-                            <div className="font-bold text-xl">{chunk.essay_title}</div>
-                            <div className="mt-1 font-bold text-sm">{chunk.essay_date}</div>
+                            <div className="font-bold text-xl text-[#990000]">{guide.guide_title}</div>
+                            <div className="mt-1 font-bold text-sm">{guide.page_title}: {guide.box_title}</div>
                           </div>
                           <a
                             className="hover:opacity-50 ml-2"
-                            href={chunk.essay_url}
+                            href={guide.guide_url}
                             target="_blank"
                             rel="noreferrer"
                           >
                             <IconExternalLink />
                           </a>
                         </div>
-                        <div className="mt-2">{chunk.content}</div>
+                        <div className="mt-2">{guide.box_content}</div>
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
-            ) : chunks.length > 0 ? (
+            ) : guides.length > 0 ? (
               <div className="mt-6 pb-16">
-                <div className="font-bold text-2xl">Passages</div>
-                {chunks.map((chunk, index) => (
+                <div className="font-bold text-2xl">Matching Guides</div>
+                {guides.map((guide, index) => (
                   <div key={index}>
                     <div className="mt-4 border border-zinc-600 rounded-lg p-4">
                       <div className="flex justify-between">
                         <div>
-                          <div className="font-bold text-xl">{chunk.essay_title}</div>
-                          <div className="mt-1 font-bold text-sm">{chunk.essay_date}</div>
+                          <div className="font-bold text-xl">{guide.guide_title}</div>
+                          <div className="mt-1 font-bold text-sm">{guide.page_title}</div>
                         </div>
                         <a
                           className="hover:opacity-50 ml-2"
-                          href={chunk.essay_url}
+                          href={guide.guide_url}
                           target="_blank"
                           rel="noreferrer"
                         >
                           <IconExternalLink />
                         </a>
                       </div>
-                      <div className="mt-2">{chunk.content}</div>
+                      <div className="mt-2">{guide.box_content}</div>
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="mt-6 text-center text-lg">{`AI-powered search & chat for Paul Graham's essays.`}</div>
+              <div className="mt-6 text-center text-lg">{`AI-powered search & chat for select USC Libraries Research guides.`}</div>
             )}
           </div>
         </div>
-        <Footer />
       </div>
     </>
   );
